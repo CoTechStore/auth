@@ -8,17 +8,17 @@ repos:
       - id: detect-private-key
       - id: check-added-large-files
 
-#  - repo: local
-#    hooks:
-#      - id: ruff
-#        name: ruff
-#        language: python
-#        language_version: python3.12
-#        args: [
-#          '--config=ruff.toml'
-#        ]
-#        entry: 'ruff check'
-#        files: ^src/
+  - repo: local
+    hooks:
+      - id: ruff
+        name: ruff
+        language: python
+        language_version: python3.12
+        args: [
+          '--config=ruff.toml'
+        ]
+        entry: 'ruff check'
+        files: ^src/
 
   - repo: local
     hooks:
