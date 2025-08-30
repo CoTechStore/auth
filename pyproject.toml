@@ -1,0 +1,45 @@
+[project]
+name = "auth"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Anton Akuev", email = "antonakuev945@mail.ru" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "asyncpg>=0.30.0",
+    "click>=8.2.1",
+    "dishka>=1.6.0",
+    "python-dotenv>=1.1.1",
+    "sqlalchemy>=2.0.43",
+    "structlog>=25.4.0",
+    "uuid6>=2025.0.1",
+]
+
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[dependency-groups]
+dev = [
+    "mypy>=1.17.1",
+    "pre-commit>=4.3.0",
+    "ruff>=0.12.11",
+]
+web = [
+    "alembic>=1.16.5",
+    "bcrypt>=4.3.0",
+    "fastapi>=0.116.1",
+    "levenshtein>=0.27.1",
+    "python-multipart>=0.0.20",
+    "uvicorn>=0.35.0",
+]
+worker = [
+    "faststream>=0.5.48",
+    "taskiq>=0.11.18",
+    "taskiq-aio-pika>=0.4.3",
+]
+
+[tool.setuptools.package-data]
+"auth.infrastructure.persistence.alembic" = ["alembic.ini"]

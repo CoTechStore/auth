@@ -1,0 +1,125 @@
+services:
+
+  auth-service:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+      target: web-production
+    env_file: .env
+    container_name: auth-service
+    command: ["sh", "-c", "core-web start-uvicorn"]
+    restart: unless-stopped
+    depends_on:
+      auth-migrator:
+        condition: service_completed_successfully
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -f http://localhost:80/healthcheck || exit 1" ]
+      start_period: 15s
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - auth_network
+    ports:
+      - "${SERVER_PORT}:80"
+
+  auth-worker:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+      target: worker-production
+    env_file: .env
+    container_name: auth-worker
+    command: ["sh", "-c", "core-worker start-worker"]
+    restart: unless-stopped
+    depends_on:
+      auth-service:
+        condition: service_healthy
+      auth-rabbitmq:
+        condition: service_healthy
+    networks:
+      - auth_network
+
+  auth-scheduler:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+      target: worker-production
+    env_file: .env
+    container_name: auth-scheduler
+    command: ["sh", "-c", "core-worker start-scheduler"]
+    restart: unless-stopped
+    depends_on:
+      auth-service:
+        condition: service_healthy
+      auth-rabbitmq:
+        condition: service_healthy
+    networks:
+      - auth_network
+
+  auth-migrator:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+      target: web-production
+    env_file: .env
+    container_name: auth-migrator
+    command: ["sh", "-c", "core migrate"]
+    restart: no
+    depends_on:
+      auth-db:
+        condition: service_healthy
+    networks:
+      - auth_network
+
+  auth-db:
+    image: postgres:17.4-alpine
+    env_file: .env
+    container_name: auth-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      PGDATA: /data/postgres
+    volumes:
+      - pg_data:/data/postgres
+      - ./scripts/db-initializer.sh:/docker-entrypoint-initdb.d/db-initializer.sh
+    networks:
+      - auth_network
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER}" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  auth-rabbitmq:
+    image: rabbitmq:4.1.0-alpine
+    env_file: .env
+    container_name: auth-rabbitmq
+    restart: unless-stopped
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBIT_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBIT_PASSWORD}
+      RABBITMQ_NODE_PORT: ${RABBIT_PORT}
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - auth_network
+    ports:
+      - "${RABBIT_PORT}:${RABBIT_PORT}"
+      - "15673:15673"
+    healthcheck:
+      test: ["CMD-SHELL", "rabbitmq-diagnostics -q ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  auth_network:
+    driver: bridge
+
+volumes:
+  pg_data:
+  rabbitmq_data:
