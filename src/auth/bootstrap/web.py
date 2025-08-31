@@ -12,6 +12,7 @@ from auth.bootstrap.di.containers.web import web_container
 from auth.infrastructure.logging import get_logger_config
 from auth.infrastructure.persistence.sqlalchemy.tables.setup import setup_mappings
 from auth.presentation.web.controllers.auth import AUTH_ROUTER
+from auth.presentation.web.controllers.healthcheck import HEALTHCHECK_ROUTER
 from auth.presentation.web.exceptions.setup import (
     setup_application_error_handler,
     setup_domain_error_handler,
@@ -88,6 +89,7 @@ def setup_exception_handlers(application: FastAPI) -> None:
 
 def setup_routers(application: FastAPI) -> None:
     """Регистрация маршрутов для FastAPI."""
+    application.include_router(HEALTHCHECK_ROUTER)
     application.include_router(AUTH_ROUTER)
 
 
