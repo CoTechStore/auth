@@ -63,7 +63,9 @@ ignore = [
     "RSE102",
     "S105",
     "TC006",
-    "SLF001"
+    "SLF001",
+    "RUF022",
+    "I001"
 ]
 
 [lint.pydocstyle]

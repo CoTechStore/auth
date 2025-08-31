@@ -23,7 +23,7 @@ from auth.infrastructure.outbox.outbox_handler import OutboxHandler
 from auth.presentation.sender import Sender
 
 
-class WebMediatorProvider(Provider):
+class MediatorProvider(Provider):
     """Провайдер медиатора."""
 
     scope = Scope.REQUEST

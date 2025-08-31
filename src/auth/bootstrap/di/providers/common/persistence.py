@@ -11,7 +11,7 @@ from auth.infrastructure.persistence.sqlalchemy.engine import (
 )
 
 
-class WebPersistenceProvider(Provider):
+class PersistenceProvider(Provider):
     """Провайдер для PostgreSQL."""
 
     scope = Scope.APP

@@ -7,6 +7,7 @@ from typing import Self
 
 from dotenv import load_dotenv
 
+from auth.infrastructure.outbox.config import RabbitConfig
 from auth.infrastructure.persistence.sqlalchemy.config import PostgresConfig
 
 load_dotenv()
@@ -88,6 +89,7 @@ class AuthConfig:
 @dataclass(frozen=True)
 class Config:
     postgres_config: PostgresConfig
+    rabbit_config: RabbitConfig
     auth_config: AuthConfig
     app_config: AppConfig
 
@@ -96,6 +98,7 @@ class Config:
 def get_config() -> Config:
     return Config(
         postgres_config=PostgresConfig.from_env(),
+        rabbit_config=RabbitConfig.from_env(),
         auth_config=AuthConfig.from_env(),
         app_config=AppConfig.from_env(),
     )

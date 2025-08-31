@@ -4,15 +4,15 @@ from uvicorn import Config as UvicornConfig
 from uvicorn import Server as UvicornServer
 
 from auth.bootstrap.config import get_config
-from auth.bootstrap.di.containers import cli_container
+from auth.bootstrap.di.containers.cli_web import cli_web_container
 from auth.infrastructure.persistence.alembic.config import get_alembic_config
-from auth.presentation.cli.migrations import (
+from auth.presentation.cli.commands.migrations import (
     make_migrations,
     migrate,
     rollback,
     show_current_migration,
 )
-from auth.presentation.cli.server_starting import start_uvicorn
+from auth.presentation.cli.commands.server_start import start_uvicorn
 
 
 @group()
@@ -22,13 +22,13 @@ def main(context: Context) -> None:
     app_config = get_config().app_config
     alembic_config = get_alembic_config()
     uvicorn_config = UvicornConfig(
-        app="auth.entrypoint.web:app_factory",
+        app="auth.bootstrap.web:app_factory",
         host=app_config.server_host,
         port=app_config.server_port,
         factory=True,
     )
     uvicorn_server = UvicornServer(uvicorn_config)
-    container = cli_container(alembic_config, uvicorn_config, uvicorn_server)
+    container = cli_web_container(alembic_config, uvicorn_config, uvicorn_server)
     setup_dishka(container, context, finalize_container=True)
 
 

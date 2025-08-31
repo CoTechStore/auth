@@ -11,7 +11,7 @@ from auth.infrastructure.persistence.adapters import (
 )
 
 
-class WebDomainAdaptersProvider(Provider):
+class DomainAdaptersProvider(Provider):
     """Провайдер адаптеров домена."""
 
     scope = Scope.REQUEST

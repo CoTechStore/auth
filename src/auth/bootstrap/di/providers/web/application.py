@@ -19,7 +19,7 @@ from auth.infrastructure.adapters import (
 )
 
 
-class WebApplicationAdaptersProvider(Provider):
+class ApplicationAdaptersProvider(Provider):
     """Провайдер адаптеров приложения."""
 
     scope = Scope.REQUEST

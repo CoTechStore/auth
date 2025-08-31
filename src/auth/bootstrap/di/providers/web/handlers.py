@@ -8,7 +8,7 @@ from auth.application.common.behaviors import (
 from auth.application.operations.commands import LoginHandler, LogoutHandler
 
 
-class WebHandlersProvider(Provider):
+class HandlersProvider(Provider):
     """Провайдер обработчиков."""
 
     scope = Scope.REQUEST

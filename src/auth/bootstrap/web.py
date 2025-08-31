@@ -8,7 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.utils import get_openapi
 
 from auth.bootstrap.config import AppConfig, get_config
-from auth.bootstrap.di.containers import web_container
+from auth.bootstrap.di.containers.web import web_container
 from auth.infrastructure.logging import get_logger_config
 from auth.infrastructure.persistence.sqlalchemy.tables.setup import setup_mappings
 from auth.presentation.web.controllers.auth import AUTH_ROUTER
