@@ -1,8 +1,7 @@
 #!/bin/bash
 
 # Параметры подключения к PostgreSQL
-DB_NAME_CORE=$POSTGRES_DATABASE
-#DB_NAME_MONITORING="Siracusa.MonitoringDataDb"
+DB_NAME_AUTH=auth
 DB_USER=$POSTGRES_USER
 
 # Экспортируем пароль для использования psql
@@ -31,4 +30,4 @@ check_and_create_db() {
 }
 
 # Вызываем функцию для каждой базы данных
-check_and_create_db "$DB_NAME_CORE"
+check_and_create_db "$DB_NAME_AUTH"

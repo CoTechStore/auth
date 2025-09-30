@@ -3,11 +3,10 @@ from dataclasses import dataclass, field
 from datetime import datetime
 
 from auth.domain.shared.event_id import EventId
-from auth.domain.shared.markers import Notification
 
 
 @dataclass(frozen=True, kw_only=True)
-class DomainEvent(Notification):
+class DomainEvent:
     """Базовый класс доменных событий."""
 
     event_id: EventId | None = field(default=None, init=False)
@@ -36,3 +35,8 @@ class DomainEvent(Notification):
 class DomainEventAdder(ABC):
     @abstractmethod
     def add_event(self, event: DomainEvent) -> None: ...
+
+
+class EventHandler[TDomainEvent: DomainEvent](ABC):
+    @abstractmethod
+    async def handle(self, event: TDomainEvent) -> None: ...

@@ -1,7 +1,7 @@
 from dishka import FromDishka
 from dishka.integrations.taskiq import inject
 
-from auth.infrastructure.outbox.outbox_processor import OutboxProcessor
+from auth.infrastructure.messaging.outbox.outbox_processor import OutboxProcessor
 
 
 @inject

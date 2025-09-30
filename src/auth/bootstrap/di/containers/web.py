@@ -3,13 +3,14 @@ from dishka.integrations.fastapi import FastapiProvider
 from structlog.stdlib import BoundLogger
 
 from auth.bootstrap.config import AuthConfig
-from auth.bootstrap.di.providers.common import MediatorProvider, PersistenceProvider
+from auth.bootstrap.di.providers.common import PersistenceProvider
 from auth.bootstrap.di.providers.web import (
     ApplicationAdaptersProvider,
     AuthProvider,
     DomainAdaptersProvider,
     HandlersProvider,
     WebConfigProvider,
+    MediatorProvider,
 )
 from auth.infrastructure.persistence.sqlalchemy.config import PostgresConfig
 

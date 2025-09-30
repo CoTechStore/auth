@@ -5,16 +5,16 @@ from auth.domain.user.value_objects import UserId
 
 
 @dataclass(frozen=True, slots=True)
-class PasswordChanged(DomainEvent):
+class UserPasswordChanged(DomainEvent):
     user_id: UserId
     hash_password: bytes
 
 
 @dataclass(frozen=True, slots=True)
-class RoleChanged(DomainEvent):
+class UserRoleChanged(DomainEvent):
     user_id: UserId
-    role_name: str
-    role_extended: bool
+    name: str
+    extended: bool
 
 
 @dataclass(frozen=True, slots=True)

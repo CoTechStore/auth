@@ -2,35 +2,21 @@ x-shared-web-parameters: &x-shared-web-parameters
   build:
     context: ./
     dockerfile: Dockerfile
-    target: web-production
+    target: web-runtime
   env_file: .env
   networks:
     - auth_network
 
-x-shared-worker-parameters: &x-shared-worker-parameters
-  build:
-    context: ./
-    dockerfile: Dockerfile
-    target: worker-production
-  restart: unless-stopped
-  env_file: .env
-  networks:
-    - auth_network
-  depends_on:
-    auth-service:
-      condition: service_healthy
-    auth-rabbitmq:
-      condition: service_healthy
 
 services:
 
-  auth-service:
+  auth.service:
     <<: *x-shared-web-parameters
-    container_name: auth-service
-    command: ["sh", "-c", "core-web start-uvicorn"]
+    container_name: auth.service
+    command: ["sh", "-c", "auth-web start-uvicorn"]
     restart: unless-stopped
     depends_on:
-      auth-migrator:
+      auth.migrator:
         condition: service_completed_successfully
     healthcheck:
       test: [ "CMD-SHELL", "curl -f http://localhost:80/healthcheck || exit 1" ]
@@ -41,29 +27,36 @@ services:
     ports:
       - "${SERVER_PORT}:80"
 
-  auth-migrator:
+  auth.migrator:
     <<: *x-shared-web-parameters
-    container_name: auth-migrator
-    command: ["sh", "-c", "core migrate"]
+    container_name: auth.migrator
+    command: ["sh", "-c", "auth-web migrate"]
     restart: no
     depends_on:
-      auth-db:
+      auth.db:
         condition: service_healthy
 
-  auth-worker:
-    <<: *x-shared-worker-parameters
-    container_name: auth-worker
-    command: ["sh", "-c", "core-worker start-worker"]
+  auth.worker:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+      target: worker-runtime
+    container_name: auth.worker
+    command: [ "sh", "-c", "auth-worker start-worker" ]
+    restart: unless-stopped
+    env_file: .env
+    networks:
+      - auth_network
+    depends_on:
+      auth.service:
+        condition: service_healthy
+      auth.rabbitmq:
+        condition: service_healthy
 
-  auth-scheduler:
-    <<: *x-shared-worker-parameters
-    container_name: auth-scheduler
-    command: ["sh", "-c", "core-worker start-scheduler"]
-
-  auth-db:
+  auth.db:
     image: postgres:17.4-alpine
     env_file: .env
-    container_name: auth-db
+    container_name: auth.db
     restart: unless-stopped
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
@@ -82,15 +75,16 @@ services:
       timeout: 5s
       retries: 5
 
-  auth-rabbitmq:
+  auth.rabbitmq:
     image: rabbitmq:4.1.0-alpine
     env_file: .env
-    container_name: auth-rabbitmq
+    container_name: auth.rabbitmq
     restart: unless-stopped
     environment:
       RABBITMQ_DEFAULT_USER: ${RABBIT_USER}
       RABBITMQ_DEFAULT_PASS: ${RABBIT_PASSWORD}
       RABBITMQ_NODE_PORT: ${RABBIT_PORT}
+      RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS: -rabbit log_levels [{connection,error},{default,error}] disk_free_limit 2147483648
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
     networks:

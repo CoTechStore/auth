@@ -3,9 +3,9 @@ from collections.abc import Callable, Coroutine
 from typing import Any
 
 from auth.application.common.markers import BaseRequest
-from auth.domain.shared.markers import Notification
+from auth.domain.shared.domain_event import DomainEvent
 
-type HandleNext[TRequest: BaseRequest | Notification, TResponse] = Callable[
+type HandleNext[TRequest: BaseRequest | DomainEvent, TResponse] = Callable[
     [TRequest], Coroutine[Any, Any, TResponse]
 ]
 
@@ -15,7 +15,7 @@ class RequestHandler[TRequest: BaseRequest[Any], TResponse](ABC):
     async def handle(self, request: TRequest) -> TResponse: ...
 
 
-class PipelineBehaviorHandler[TRequest: BaseRequest[Any] | Notification, TResponse](ABC):
+class PipelineBehaviorHandler[TRequest: BaseRequest[Any] | DomainEvent, TResponse](ABC):
     @abstractmethod
     async def handle(
         self, request: TRequest, handle_next: HandleNext[TRequest, TResponse]
@@ -34,8 +34,3 @@ class QueryHandler[TRequest: BaseRequest[Any], TResponse](
 ):
     @abstractmethod
     async def handle(self, query: TRequest) -> TResponse: ...
-
-
-class NotificationHandler[TNotification: Notification](ABC):
-    @abstractmethod
-    async def handle(self, notification: TNotification) -> None: ...

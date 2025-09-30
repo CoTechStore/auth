@@ -5,7 +5,6 @@ from auth.application.common.const import errors as text
 from auth.application.common.handlers import CommandHandler
 from auth.application.common.markers import Command
 from auth.application.ports import IdentityProvider, PasswordVerify, TimeProvider
-from auth.application.ports.token_provider import TokenProvider
 from auth.domain.session.factory import SessionFactory
 from auth.domain.session.repository import SessionRepository
 from auth.domain.user.repository import UserRepository
@@ -22,7 +21,6 @@ class LogoutHandler(CommandHandler[LogoutCommand, None]):
         user_repository: UserRepository,
         password_verify: PasswordVerify,
         session_factory: SessionFactory,
-        token_provider: TokenProvider,
         time_provider: TimeProvider,
         session_repository: SessionRepository,
     ) -> None:
@@ -30,7 +28,6 @@ class LogoutHandler(CommandHandler[LogoutCommand, None]):
         self.__user_repository = user_repository
         self.__password_verify = password_verify
         self.__session_factory = session_factory
-        self.__token_provider = token_provider
         self.__time_provider = time_provider
         self.__session_repository = session_repository
 

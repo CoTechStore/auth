@@ -4,26 +4,25 @@ from typing import cast
 
 from auth.application.common.handlers import (
     HandleNext,
-    NotificationHandler,
     PipelineBehaviorHandler,
     RequestHandler,
 )
 from auth.application.common.markers import BaseRequest
-from auth.domain.shared.markers import Notification
+from auth.domain.shared.domain_event import EventHandler, DomainEvent
 from auth.infrastructure.mediator.interfaces import Chain
 
 
 class ChainImpl(Chain):
-    """Класс собирающий цепочку поведений."""
+    """A class that collects a chain of behaviors."""
 
     def build_pipeline_behaviors(
         self,
-        handler: RequestHandler | NotificationHandler,
+        handler: RequestHandler | EventHandler,
         behaviors: Iterable[PipelineBehaviorHandler],
     ) -> HandleNext:
         """
-        Паттерн Chain of Responsibility.
-        Добавление дополнительных поведений к обработчику.
+        Chain of Responsibility pattern.
+        Adding additional behaviors to the handler.
         """
         handle_next: HandleNext = handler.handle
 
@@ -39,9 +38,9 @@ class ChainImpl(Chain):
     ) -> HandleNext:
         @functools.wraps(handle_next)
         async def wrapped_handler[TResponse](
-            request: BaseRequest | Notification,
+            request: BaseRequest | DomainEvent,
         ) -> TResponse:
-            """Декоратор выполняющий поведение поверх обработчика."""
+            """Execute behavior on top of a handler."""
             return cast(TResponse, await behavior.handle(request, handle_next))
 
         return wrapped_handler

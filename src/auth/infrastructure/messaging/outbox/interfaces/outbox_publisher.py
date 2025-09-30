@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from auth.infrastructure.outbox.outbox_message import OutboxMessage
+from auth.infrastructure.messaging.outbox.outbox_message import OutboxMessage
 
 
 class OutboxPublisher(ABC):

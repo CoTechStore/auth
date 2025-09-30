@@ -3,7 +3,7 @@ from dishka import Container, make_container
 from uvicorn import Config as UvicornConfig
 from uvicorn import Server as UvicornServer
 
-from auth.bootstrap.di.providers.cli import CliWebConfigProvider
+from auth.bootstrap.di.providers.cli.web import CliWebConfigProvider
 
 
 def cli_web_container(

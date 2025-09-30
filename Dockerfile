@@ -1,5 +1,5 @@
 # ---------------- Base -----------------------
-FROM python:3.12-slim-bookworm AS python-base
+FROM python:3.12-alpine AS python-base
 
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
@@ -18,25 +18,28 @@ WORKDIR $APP_PATH
 # --------------- Base Builder -----------------
 FROM python-base AS base-builder
 
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends gcc git \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+RUN apk add --no-cache \
+    gcc \
+    musl-dev \
+    python3-dev \
+    git \
+    libffi-dev \
+    openssl-dev
 
 COPY --from=ghcr.io/astral-sh/uv:0.8.0 /uv /uvx /bin/
 
 COPY ./pyproject.toml ./uv.lock ./
-
 COPY ./src ./src
 # ----------------------------------------------
 
-# --------------- Base Production --------------
-FROM python-base AS base-production
+# ----------------- Base Runtime ---------------
+FROM python-base AS base-runtime
 
-RUN apt-get update && apt-get install -y --no-install-recommends curl \
-    && apt-get clean && rm -rf /var/lib/apt/lists/*
+RUN apk add --no-cache \
+    curl \
+    libstdc++
 
-RUN useradd --create-home --no-log-init --shell /bin/bash appuser
+RUN adduser -D -h /home/appuser -s /bin/sh appuser
 
 USER appuser
 # ----------------------------------------------
@@ -45,7 +48,7 @@ USER appuser
 FROM base-builder AS web-builder
 RUN uv sync --no-dev --group web --no-editable --frozen
 
-FROM base-production AS web-production
+FROM base-runtime AS web-runtime
 COPY --from=web-builder $VIRTUAL_ENV $VIRTUAL_ENV
 # ==============================================
 
@@ -53,6 +56,6 @@ COPY --from=web-builder $VIRTUAL_ENV $VIRTUAL_ENV
 FROM base-builder AS worker-builder
 RUN uv sync --no-dev --group worker --no-editable --frozen
 
-FROM base-production AS worker-production
+FROM base-runtime AS worker-runtime
 COPY --from=worker-builder $VIRTUAL_ENV $VIRTUAL_ENV
 # ==============================================

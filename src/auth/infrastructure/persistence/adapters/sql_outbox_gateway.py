@@ -3,8 +3,8 @@ from dataclasses import asdict
 from sqlalchemy import Row, and_, delete, insert, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from auth.infrastructure.outbox.interfaces import OutboxGateway
-from auth.infrastructure.outbox.outbox_message import OutboxMessage
+from auth.infrastructure.messaging.outbox.interfaces import OutboxGateway
+from auth.infrastructure.messaging.outbox.outbox_message import OutboxMessage
 from auth.infrastructure.persistence.sqlalchemy.tables import OUTBOX_TABLE
 
 

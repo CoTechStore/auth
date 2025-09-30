@@ -38,17 +38,17 @@ class LogErrorBehaviorHandler[TRequest: BaseRequest, TResponse](
 
             if isinstance(error, (ApplicationError, DomainError)):
                 type_error = error.type.name
-                self.__logger.exception(
+                await self.__logger.aexception(
                     event=request.__class__.__name__,
-                    current_user_id=getattr(user_id, "hex", None),
+                    current_user_id=str(user_id) if user_id else None,
                     status_code=self.__status_code[type_error],
                     error_type=type_error,
                     message=error.message,
                 )
             else:
-                self.__logger.exception(
+                await self.__logger.aexception(
                     event=request.__class__.__name__,
-                    current_user_id=getattr(user_id, "hex", None),
+                    current_user_id=str(user_id) if user_id else None,
                     status_code=500,
                     error_type="InternalError",
                     message=str(error),

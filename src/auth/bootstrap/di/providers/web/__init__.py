@@ -3,6 +3,7 @@ from auth.bootstrap.di.providers.web.application import ApplicationAdaptersProvi
 from auth.bootstrap.di.providers.web.auth import AuthProvider
 from auth.bootstrap.di.providers.web.domain import DomainAdaptersProvider
 from auth.bootstrap.di.providers.web.handlers import HandlersProvider
+from auth.bootstrap.di.providers.web.mediator import MediatorProvider
 
 
 __all__ = (
@@ -11,4 +12,5 @@ __all__ = (
     "AuthProvider",
     "DomainAdaptersProvider",
     "HandlersProvider",
+    "MediatorProvider",
 )

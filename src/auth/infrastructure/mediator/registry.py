@@ -1,24 +1,23 @@
 from auth.application.common.handlers import (
-    NotificationHandler,
     PipelineBehaviorHandler,
     RequestHandler,
 )
 from auth.application.common.markers import BaseRequest
-from auth.domain.shared.markers import Notification
+from auth.domain.shared.domain_event import EventHandler, DomainEvent
 
 
 class Registry:
     """Регистрация обработчиков и поведений."""
 
     __request_handlers: dict[type[BaseRequest], type[RequestHandler]]
-    __notification_handlers: dict[type[Notification], list[type[NotificationHandler]]]
+    __event_handlers: dict[type[DomainEvent], list[type[EventHandler]]]
     __pipeline_behaviors: dict[
-        type[BaseRequest] | type[Notification], list[type[PipelineBehaviorHandler]]
+        type[BaseRequest] | type[DomainEvent], list[type[PipelineBehaviorHandler]]
     ]
 
     def __init__(self) -> None:
         self.__request_handlers = {}
-        self.__notification_handlers = {}
+        self.__event_handlers = {}
         self.__pipeline_behaviors = {}
 
     def add_request_handler(
@@ -29,19 +28,19 @@ class Registry:
         """Добавить обработчик запроса."""
         self.__request_handlers[request_type] = request_handler
 
-    def add_notification_handlers(
+    def add_event_handlers(
         self,
-        notification_type: type[Notification],
-        *notification_handlers: type[NotificationHandler],
+        notification_type: type[DomainEvent],
+        *notification_handlers: type[EventHandler],
     ) -> None:
         """Добавить обработчик уведомления."""
-        self.__notification_handlers.setdefault(notification_type, []).extend(
+        self.__event_handlers.setdefault(notification_type, []).extend(
             notification_handlers,
         )
 
     def add_pipeline_behavior_handlers(
         self,
-        request_type: type[BaseRequest] | type[Notification],
+        request_type: type[BaseRequest] | type[DomainEvent],
         *pipeline_behaviors: type[PipelineBehaviorHandler],
     ) -> None:
         """Добавить поведение для запроса."""
@@ -53,19 +52,19 @@ class Registry:
         """Получить обработчик запроса."""
         return self.__request_handlers.get(request_type)
 
-    def get_notification_handlers(
-        self, notification_type: type[Notification]
-    ) -> list[type[NotificationHandler]]:
+    def get_event_handlers(
+        self, event_type: type[DomainEvent]
+    ) -> list[type[EventHandler]]:
         """Получить обработчики уведомления."""
         return [
             handler
-            for notification, handlers in self.__notification_handlers.items()
+            for event, handlers in self.__event_handlers.items()
             for handler in handlers
-            if issubclass(notification_type, notification)
+            if issubclass(event_type, event)
         ]
 
     def get_pipeline_behaviors(
-        self, request_type: type[BaseRequest] | type[Notification]
+        self, request_type: type[BaseRequest] | type[DomainEvent]
     ) -> list[type[PipelineBehaviorHandler]]:
         """Получить поведения для запроса."""
         return [

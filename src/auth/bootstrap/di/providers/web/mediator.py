@@ -19,7 +19,7 @@ from auth.infrastructure.mediator.interfaces import Chain, Resolver
 from auth.infrastructure.mediator.mediator import MediatorImpl
 from auth.infrastructure.mediator.registry import Registry
 from auth.infrastructure.mediator.resolvers import DishkaResolver
-from auth.infrastructure.outbox.outbox_handler import OutboxHandler
+from auth.infrastructure.messaging.outbox.outbox_handler import OutboxHandler
 from auth.presentation.sender import Sender
 
 
@@ -40,7 +40,7 @@ class MediatorProvider(Provider):
             Command, EventPublishingBehaviorHandler, CommitionBehaviorHandler
         )
 
-        registry.add_notification_handlers(DomainEvent, OutboxHandler)
+        registry.add_event_handlers(DomainEvent, OutboxHandler)
 
         return registry
 

@@ -2,7 +2,7 @@ from dishka import Provider, Scope, from_context
 from faststream.rabbit import RabbitBroker
 from structlog.stdlib import BoundLogger
 
-from auth.infrastructure.outbox.config import RabbitConfig
+from auth.infrastructure.messaging.config import RabbitConfig
 from auth.infrastructure.persistence.sqlalchemy.config import PostgresConfig
 
 

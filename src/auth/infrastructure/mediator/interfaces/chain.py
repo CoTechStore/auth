@@ -3,16 +3,16 @@ from collections.abc import Iterable
 
 from auth.application.common.handlers import (
     HandleNext,
-    NotificationHandler,
     PipelineBehaviorHandler,
     RequestHandler,
 )
+from auth.domain.shared.domain_event import EventHandler
 
 
 class Chain(ABC):
     @abstractmethod
     def build_pipeline_behaviors(
         self,
-        handler: RequestHandler | NotificationHandler,
+        handler: RequestHandler | EventHandler,
         behaviors: Iterable[PipelineBehaviorHandler],
     ) -> HandleNext: ...

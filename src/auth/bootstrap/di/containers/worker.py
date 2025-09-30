@@ -3,13 +3,9 @@ from dishka.integrations.taskiq import TaskiqProvider
 from faststream.rabbit import RabbitBroker
 from structlog.stdlib import BoundLogger
 
-from auth.bootstrap.di.providers.common import MediatorProvider, PersistenceProvider
-from auth.bootstrap.di.providers.worker import (
-    BrokerProvider,
-    OutboxProvider,
-    WorkerConfigProvider,
-)
-from auth.infrastructure.outbox.config import RabbitConfig
+from auth.bootstrap.di.providers.common import PersistenceProvider
+from auth.bootstrap.di.providers.worker import OutboxProvider, WorkerConfigProvider
+from auth.infrastructure.messaging.config import RabbitConfig
 from auth.infrastructure.persistence.sqlalchemy.config import PostgresConfig
 
 
@@ -22,9 +18,7 @@ def worker_container(
     """Создание контейнера для фоновых задач."""
     return make_async_container(
         TaskiqProvider(),
-        BrokerProvider(),
         OutboxProvider(),
-        MediatorProvider(),
         WorkerConfigProvider(),
         PersistenceProvider(),
         context={

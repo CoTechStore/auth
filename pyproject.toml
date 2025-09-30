@@ -4,13 +4,13 @@ version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
 authors = [
-    { name = "Anton Akuev", email = "antonakuev945@mail.ru" }
+    { name = "Anton Akuev" }
 ]
 requires-python = ">=3.12"
 dependencies = [
-    "asyncpg>=0.30.0",
     "click>=8.2.1",
     "dishka>=1.6.0",
+    "psycopg[binary]>=3.2.9",
     "python-dotenv>=1.1.1",
     "sqlalchemy>=2.0.43",
     "structlog>=25.4.0",
@@ -42,8 +42,8 @@ worker = [
 ]
 
 [project.scripts]
-auth-web = "auth.bootstrap.cli_web:main"
-auth-worker = "auth.bootstrap.cli_worker:main"
+auth-web = "auth.bootstrap.web.cli:main"
+auth-worker = "auth.bootstrap.worker.cli:main"
 
 [tool.setuptools.package-data]
 "auth.infrastructure.persistence.alembic" = ["alembic.ini"]

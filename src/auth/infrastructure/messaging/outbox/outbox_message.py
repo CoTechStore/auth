@@ -7,4 +7,4 @@ from auth.domain.shared.event_id import EventId
 class OutboxMessage:
     message_id: EventId
     event_type: str
-    data: str | bytes
+    data: str

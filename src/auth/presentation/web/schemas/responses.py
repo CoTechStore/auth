@@ -1,22 +1,14 @@
 import re
-from dataclasses import dataclass
 from typing import Any
 
 from pydantic import BaseModel, Field
 from starlette import status
 
 from auth.application.common.const import errors as application_text
-from auth.application.common.dto.user_info_dto import UserInfoDto
 from auth.domain.user.const import errors as domain_user_text
+from auth.domain.user.value_objects import UserId
 from auth.presentation.web.const import errors as presentation_error_text
 from auth.presentation.web.const import response as presentation_response_text
-
-
-@dataclass(frozen=True, slots=True, kw_only=True)
-class AuthenticateSuccessfulResponse:
-    access_token: str
-    expires: int
-    user_info: UserInfoDto
 
 
 class ModelResponse(BaseModel):
@@ -52,7 +44,7 @@ def generate_combined_schema[TModel: ModelResponse](
 
 class LoginSuccessfulResponseSchema(ModelResponse):
     status_code: int = Field(default=status.HTTP_200_OK)
-    result: AuthenticateSuccessfulResponse
+    result: UserId
 
 
 class LogoutSuccessfulResponseSchema(ModelResponse):

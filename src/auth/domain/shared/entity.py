@@ -6,8 +6,6 @@ from auth.domain.shared.domain_event import DomainEvent, DomainEventAdder
 
 
 class Entity[TEntityId: Hashable]:
-    """Базовый класс сущности."""
-
     def __init__(self, entity_id: TEntityId) -> None:
         self._entity_id = entity_id
 
@@ -17,22 +15,20 @@ class Entity[TEntityId: Hashable]:
 
     @entity_id.setter
     def entity_id(self, identity: TEntityId) -> NoReturn:
-        raise AttributeError("Идентификатор сущности не может быть изменен.")
+        raise AttributeError("The entity ID cannot be changed.")
 
     def __eq__(self, other: object) -> bool:
-        """Метод для сравнения сущностей."""
         if not isinstance(other, Entity):
             return NotImplemented
 
         return bool(other.entity_id == self.entity_id)
 
     def __hash__(self) -> int:
-        """Метод для получения хэша сущности."""
         return hash(self.entity_id)
 
 
 class EventTrackableEntity(ABC):
-    """Базовый класс для отслеживания событий."""
+    """The base class for tracking events."""
 
     def __init__(self, event_adder: DomainEventAdder) -> None:
         self._event_adder = event_adder

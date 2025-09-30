@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from auth.application.ports import IdGenerator, TimeProvider
 from auth.domain.session.factory import SessionFactory
 from auth.domain.session.session import Session
@@ -18,15 +16,14 @@ class SessionFactoryImpl(SessionFactory):
         self.__time_provider = time_provider
         self.__event_adder = event_adder
 
-    async def authenticate_user(
-        self, user_id: UserId, iat: datetime, expires: datetime
-    ) -> Session:
+    def authenticate_user(self, user_id: UserId) -> Session:
+        current_time = self.__time_provider.current_time()
         session = Session(
             session_id=self.__id_generator.generate_session_id(),
             event_adder=self.__event_adder,
             user_id=user_id,
-            iat=iat,
-            expires_at=expires,
+            iat=current_time,
+            expires_at=current_time,
         )
 
         return session

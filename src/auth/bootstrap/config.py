@@ -7,7 +7,7 @@ from typing import Self
 
 from dotenv import load_dotenv
 
-from auth.infrastructure.outbox.config import RabbitConfig
+from auth.infrastructure.messaging.config import RabbitConfig
 from auth.infrastructure.persistence.sqlalchemy.config import PostgresConfig
 
 load_dotenv()
@@ -30,7 +30,7 @@ class AppConfig:
         """Возвращает настройки приложения."""
         server_host = environ.get("SERVER_HOST", default="127.0.0.1")
         server_port = int(environ.get("SERVER_PORT", default="8000"))
-        openapi_url = environ.get("OPENAPI_URL", default="/swagger/docs/v1.0/core")
+        openapi_url = environ.get("OPENAPI_URL", default="/swagger/docs/v1.0/auth")
         client_id = environ.get("CLIENT_ID", default="fastapi")
         client_secret = environ.get("CLIENT_SECRET", default="fastapi_secret")
         cors_origins = environ.get("CORS_ORIGINS", default="*").split(",")

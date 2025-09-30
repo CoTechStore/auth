@@ -1,5 +1,5 @@
-from auth.infrastructure.outbox.interfaces import OutboxGateway, OutboxPublisher
-from auth.infrastructure.outbox.transaction import Transaction
+from auth.infrastructure.messaging.outbox.interfaces import OutboxGateway, OutboxPublisher
+from auth.infrastructure.messaging.transaction import Transaction
 
 
 class OutboxProcessor:

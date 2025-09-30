@@ -1,13 +1,15 @@
 from auth.domain.shared.domain_event import DomainEventAdder
 from auth.domain.shared.entity import Entity, EventTrackableEntity
-from auth.domain.user.events import PasswordChanged, RoleChanged, UserHiddenOrRevealed
+from auth.domain.user.events import (
+    UserPasswordChanged,
+    UserRoleChanged,
+    UserHiddenOrRevealed,
+)
 from auth.domain.user.role_enum import RoleEnum
 from auth.domain.user.value_objects import Login, Role, UserId
 
 
 class User(Entity[UserId], EventTrackableEntity):
-    """Сущность пользователя."""
-
     def __init__(
         self,
         user_id: UserId,
@@ -29,31 +31,28 @@ class User(Entity[UserId], EventTrackableEntity):
         self._organization_name = organization_name
 
     def edit(self, role: Role) -> None:
-        """Редактировать сущность пользователя."""
         if role.name == self.role_name and role.extended == self.role_extended:
             return
         self._role = role
 
         self.track_event(
-            event=RoleChanged(
+            event=UserRoleChanged(
                 user_id=self.entity_id,
-                role_name=self.role_name,
-                role_extended=self.role_extended,
+                name=self.role_name,
+                extended=self.role_extended,
             )
         )
 
     def change_password(self, hash_password: bytes) -> None:
-        """Смена пароля у сущности пользователя."""
         self._hash_password = hash_password
 
         self.track_event(
-            event=PasswordChanged(
+            event=UserPasswordChanged(
                 user_id=self.entity_id, hash_password=self._hash_password
             )
         )
 
     def hide_or_reveal(self, hidden: bool) -> None:
-        """Скрыть (деактивировать) пользователя либо раскрыть его (активировать)."""
         if self.hidden == hidden:
             return
         self._hidden = hidden

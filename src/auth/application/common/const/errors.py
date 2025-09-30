@@ -1,20 +1,16 @@
 from typing import Final
 
-APPLICATION_FORBIDDEN: Final[str] = "У пользователя нет доступа к этой операции."
+APPLICATION_FORBIDDEN: Final[str] = "The user does not have access to this operation."
 
-INVALID_LOGIN_OR_PASSWORD: Final[str] = "Неверный логин или пароль."
-INVALID_TOKEN: Final[str] = "Неверный токен."
-INVALID_CREDENTIALS: Final[str] = "Неверные учетные данные."
+INVALID_LOGIN_OR_PASSWORD: Final[str] = "Invalid username or password."
+INVALID_TOKEN: Final[str] = "Invalid token."
+INVALID_CREDENTIALS: Final[str] = "Invalid credentials."
 
-UNAUTHORIZED: Final[str] = "Пользователь не авторизован."
-UNAUTHENTICATED: Final[str] = "Пользователь не прошел проверку подлинности."
-EXPIRED_SIGNATURE: Final[str] = (
-    "Срок действия вашего токена истек. Пожалуйста, войдите в систему еще раз."
-)
-DECODE: Final[str] = (
-    "Срок действия вашего токена истек. Пожалуйста, войдите в систему еще раз."
-)
-MISSION_REQUIRED_CLAIM: Final[str] = "В вашем токене нет обязательного поля."
+UNAUTHORIZED: Final[str] = "User is not authorized."
+UNAUTHENTICATED: Final[str] = "The user failed authentication."
+EXPIRED_SIGNATURE: Final[str] = "Your token has expired. Please log in again."
+DECODE: Final[str] = "Your token has expired. Please log in again."
+MISSION_REQUIRED_CLAIM: Final[str] = "There is no required field in your token."
 
-USER_SESSION_NOT_FOUND: Final[str] = "Сессия пользователя не найдена."
-USER_ALREADY_AUTHENTICATED: Final[str] = "Пользователь уже прошел проверку подлинности."
+USER_SESSION_NOT_FOUND: Final[str] = "The user session has not been found."
+USER_ALREADY_AUTHENTICATED: Final[str] = "The user has already been authenticated."

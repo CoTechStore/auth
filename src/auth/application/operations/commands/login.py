@@ -1,17 +1,17 @@
 from dataclasses import dataclass
+from datetime import datetime
 from typing import TYPE_CHECKING, cast
 
 from auth.application.common.application_error import AppErrorType, ApplicationError
 from auth.application.common.const import errors as text
-from auth.application.common.dto.user_info_dto import UserInfoDto
 from auth.application.common.handlers import CommandHandler
 from auth.application.common.markers import Command
-from auth.application.ports import IdentityProvider, PasswordVerify, TimeProvider
-from auth.application.ports.token_provider import TokenProvider
+from auth.application.ports import IdentityProvider, PasswordVerify
 from auth.domain.session.factory import SessionFactory
 from auth.domain.session.repository import SessionRepository
 from auth.domain.user.repository import UserRepository
-from auth.domain.user.value_objects import Login, Password
+from auth.domain.user.value_objects import Login, Password, UserId
+from auth.domain.session.session_id import SessionId
 
 if TYPE_CHECKING:
     from auth.domain.user.user import User
@@ -19,10 +19,9 @@ if TYPE_CHECKING:
 
 @dataclass(frozen=True, slots=True)
 class LoginResponse:
-    access_token: str
-    refresh_token: str
-    expires: int
-    user_info: UserInfoDto
+    user_id: UserId
+    session_id: SessionId
+    expires_at: datetime
 
 
 @dataclass(frozen=True, slots=True)
@@ -38,16 +37,12 @@ class LoginHandler(CommandHandler[LoginCommand, LoginResponse]):
         user_repository: UserRepository,
         password_verify: PasswordVerify,
         session_factory: SessionFactory,
-        token_provider: TokenProvider,
-        time_provider: TimeProvider,
         session_repository: SessionRepository,
     ) -> None:
         self.__identity_provider = identity_provider
         self.__user_repository = user_repository
         self.__password_verify = password_verify
         self.__session_factory = session_factory
-        self.__token_provider = token_provider
-        self.__time_provider = time_provider
         self.__session_repository = session_repository
 
     async def handle(self, command: LoginCommand) -> LoginResponse:
@@ -66,37 +61,15 @@ class LoginHandler(CommandHandler[LoginCommand, LoginResponse]):
 
         if not self.__password_verify.verify(password_vo.value, user.hash_password):
             raise ApplicationError(
-                type=AppErrorType.UNAUTHORIZED, message=text.INVALID_LOGIN_OR_PASSWORD
+                type=AppErrorType.UNAUTHENTICATED, message=text.INVALID_LOGIN_OR_PASSWORD
             )
 
-        current_time = self.__time_provider.current_time()
-        access_expires = self.__time_provider.access_token_expires(current_time)
-        refresh_expires = self.__time_provider.refresh_token_expires(current_time)
-        access_unix_expires = self.__time_provider.unix_time(access_expires)
-
-        session = await self.__session_factory.authenticate_user(
-            user.entity_id, iat=current_time, expires=refresh_expires
-        )
-
-        access_token = self.__token_provider.create_access_token(
-            user, session, access_expires
-        )
-        refresh_token = self.__token_provider.create_refresh_token(
-            user, session, refresh_expires
-        )
+        session = self.__session_factory.authenticate_user(user.entity_id)
 
         self.__session_repository.add(session)
 
         return LoginResponse(
-            access_token=access_token,
-            refresh_token=refresh_token,
-            expires=access_unix_expires,
-            user_info=UserInfoDto(
-                id=user.entity_id,
-                login=user.login_vo.value,
-                role=user.role_name,
-                extended=user.role_extended,
-                hidden=user.hidden,
-                organization_name=user.organization_name,
-            ),
+            user_id=user.entity_id,
+            session_id=session.entity_id,
+            expires_at=session.expires_at,
         )

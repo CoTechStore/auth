@@ -4,7 +4,7 @@ from uvicorn import Config as UvicornConfig
 from uvicorn import Server as UvicornServer
 
 from auth.bootstrap.config import get_config
-from auth.bootstrap.di.containers.cli_web import cli_web_container
+from auth.bootstrap.di.containers.cli.web import cli_web_container
 from auth.infrastructure.persistence.alembic.config import get_alembic_config
 from auth.presentation.cli.commands.migrations import (
     make_migrations,
