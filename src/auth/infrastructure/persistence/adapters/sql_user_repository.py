@@ -1,6 +1,6 @@
 from typing import Unpack
 
-from sqlalchemy import and_, false, select
+from sqlalchemy import and_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from auth.domain.shared.domain_event import DomainEventAdder
@@ -42,14 +42,9 @@ class SqlUserRepositoryImpl(UserRepository):
 
         return self.__load(user) if user else None
 
-    async def with_login(self, login: str) -> User | None:
+    async def with_username(self, username: str) -> User | None:
         """Проверка существования текущего логина."""
-        query = select(User).where(
-            and_(
-                USERS_TABLE.c.login.ilike(f"%{login}%"),
-                USERS_TABLE.c.hidden == false(),
-            )
-        )
+        query = select(User).where(and_(USERS_TABLE.c.username.ilike(f"%{username}%")))
         user = (await self.__session.execute(query)).scalar_one_or_none()
         return self.__load(user) if user else None
 

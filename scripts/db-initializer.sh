@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Параметры подключения к PostgreSQL
-DB_NAME_AUTH=auth
+DB_NAME_AUTH=$POSTGRES_DATABASE
 DB_USER=$POSTGRES_USER
 
 # Экспортируем пароль для использования psql

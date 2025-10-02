@@ -67,6 +67,11 @@ class UnauthenticatedResponseSchema(ModelResponse):
     error: str = Field(default=application_text.UNAUTHENTICATED)
 
 
+class UserAlreadyExistsResponseSchema(ModelResponse):
+    status_code: int = Field(default=status.HTTP_409_CONFLICT)
+    error: str = Field(default=application_text.USER_ALREADY_EXISTS)
+
+
 # region ----------------------------------------- 422 -------------------------------
 class EmptyLoginResponseSchema(ModelResponse):
     """Ответ при пустом логине."""

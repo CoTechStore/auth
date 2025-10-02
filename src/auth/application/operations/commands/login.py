@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 from datetime import datetime
-from typing import TYPE_CHECKING, cast
 
 from auth.application.common.application_error import AppErrorType, ApplicationError
 from auth.application.common.const import errors as text
@@ -9,12 +8,9 @@ from auth.application.common.markers import Command
 from auth.application.ports import IdentityProvider, PasswordVerify
 from auth.domain.session.factory import SessionFactory
 from auth.domain.session.repository import SessionRepository
-from auth.domain.user.repository import UserRepository
-from auth.domain.user.value_objects import Login, Password, UserId
 from auth.domain.session.session_id import SessionId
-
-if TYPE_CHECKING:
-    from auth.domain.user.user import User
+from auth.domain.user.repository import UserRepository
+from auth.domain.user.value_objects import Username, Password, UserId
 
 
 @dataclass(frozen=True, slots=True)
@@ -26,7 +22,7 @@ class LoginResponse:
 
 @dataclass(frozen=True, slots=True)
 class LoginCommand(Command[LoginResponse]):
-    login: str
+    username: str
     password: str
 
 
@@ -54,10 +50,15 @@ class LoginHandler(CommandHandler[LoginCommand, LoginResponse]):
                 message=text.USER_ALREADY_AUTHENTICATED,
             )
 
-        login_vo = Login(command.login)
+        username_vo = Username(command.username)
         password_vo = Password(command.password)
 
-        user = cast("User", await self.__user_repository.with_login(login_vo.value))
+        user = await self.__user_repository.with_username(username_vo.value)
+
+        if not user:
+            raise ApplicationError(
+                type=AppErrorType.UNAUTHENTICATED, message=text.INVALID_LOGIN_OR_PASSWORD
+            )
 
         if not self.__password_verify.verify(password_vo.value, user.hash_password):
             raise ApplicationError(

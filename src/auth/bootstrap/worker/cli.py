@@ -11,8 +11,8 @@ from auth.presentation.cli.commands.worker_start import start_worker
 def main(context: Context) -> None:
     """Старт приложением через CLI."""
     worker_args = WorkerArgs(
-        broker="core.entrypoint.worker:worker_factory",
-        modules=["core.infrastructure.outbox"],
+        broker="auth.bootstrap.worker.application:worker_factory",
+        modules=["auth.infrastructure.messaging.outbox"],
         tasks_pattern=("process_outbox.py",),
         workers=1,
     )

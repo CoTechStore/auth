@@ -2,6 +2,8 @@ from typing import Final
 
 APPLICATION_FORBIDDEN: Final[str] = "The user does not have access to this operation."
 
+USER_ALREADY_EXISTS: Final[str] = "User already exists."
+
 INVALID_LOGIN_OR_PASSWORD: Final[str] = "Invalid username or password."
 INVALID_TOKEN: Final[str] = "Invalid token."
 INVALID_CREDENTIALS: Final[str] = "Invalid credentials."

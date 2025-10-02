@@ -29,13 +29,11 @@ class Registry:
         self.__request_handlers[request_type] = request_handler
 
     def add_event_handlers(
-        self,
-        notification_type: type[DomainEvent],
-        *notification_handlers: type[EventHandler],
+        self, event_type: type[DomainEvent], *event_handlers: type[EventHandler]
     ) -> None:
         """Добавить обработчик уведомления."""
-        self.__event_handlers.setdefault(notification_type, []).extend(
-            notification_handlers,
+        self.__event_handlers.setdefault(event_type, []).extend(
+            event_handlers,
         )
 
     def add_pipeline_behavior_handlers(

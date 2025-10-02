@@ -8,7 +8,7 @@ from auth.domain.user.const import login
 
 
 @dataclass(frozen=True, slots=True)
-class Login(ValueObject):
+class Username(ValueObject):
     """Объект значения Логина."""
 
     value: str

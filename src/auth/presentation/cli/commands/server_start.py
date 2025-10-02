@@ -31,8 +31,7 @@ def start_uvicorn(
         uvicorn_server.config.port = port
 
     signal(
-        SIGINT,
-        lambda signum, frame: uvicorn_server.handle_exit(sig=signum, frame=frame),
+        SIGINT, lambda signum, frame: uvicorn_server.handle_exit(sig=signum, frame=frame)
     )
 
     uvicorn_server.run()

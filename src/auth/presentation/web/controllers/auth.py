@@ -7,18 +7,37 @@ from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from starlette import status
 from starlette.responses import Response
 
-from auth.application.operations.commands import LogoutCommand
+from auth.domain.user.value_objects import UserId
+from auth.application.operations.commands import LogoutCommand, RegisterCommand
 from auth.application.operations.commands.login import LoginCommand
 from auth.presentation.sender import Sender as Mediator
 from auth.presentation.web.const import response as text
 from auth.presentation.web.const.response import REFRESH
 from auth.presentation.web.responses import auth as auth_response
+from auth.presentation.web.schemas.base import SuccessfulResponse
 
 AUTH_ROUTER = APIRouter(prefix="/api/v1/auth", tags=["Auth"], route_class=DishkaRoute)
 
 
 @AUTH_ROUTER.post(
-    path="/login",
+    path="/register",
+    summary="Регистрация нового пользователя.",
+    responses=auth_response.REGISTER_RESPONSES,
+    status_code=status.HTTP_201_CREATED,
+)
+async def register(
+    command: RegisterCommand,
+    *,
+    mediator: FromDishka[Mediator],
+) -> SuccessfulResponse[UserId]:
+    """Контроллер для регистрации нового пользователя."""
+    result = await mediator.send(command)
+
+    return SuccessfulResponse(status_code=status.HTTP_201_CREATED, result=result)
+
+
+@AUTH_ROUTER.post(
+    path="/username",
     summary="Вход в учетную запись.",
     responses=auth_response.LOGIN_RESPONSES,
     status_code=status.HTTP_200_OK,
@@ -28,14 +47,7 @@ async def login(
     *,
     mediator: FromDishka[Mediator],
 ) -> Response:
-    """
-    Контроллер для входа в учетную запись пользователя.
-
-    Обязательные аргументы:
-    * *`username`* *(email)* - ввод почты.
-
-    * *`password`* - ввод пароля.
-    """
+    """Контроллер для входа в учетную запись пользователя."""
     command = LoginCommand(credentials.username, credentials.password)
     result = await mediator.send(command)
 

@@ -1,5 +1,6 @@
 from auth.application.operations.commands.login import LoginCommand, LoginHandler
 from auth.application.operations.commands.logout import LogoutCommand, LogoutHandler
+from auth.application.operations.commands.register import RegisterCommand, RegisterHandler
 
 
 __all__ = (
@@ -7,4 +8,6 @@ __all__ = (
     "LoginHandler",
     "LogoutCommand",
     "LogoutHandler",
+    "RegisterCommand",
+    "RegisterHandler",
 )

@@ -44,4 +44,4 @@ def get_logger_config(config: AppConfig) -> structlog.stdlib.BoundLogger:
         level=logging.INFO,
     )
 
-    return cast("structlog.stdlib.BoundLogger", structlog.get_logger("core"))
+    return cast("structlog.stdlib.BoundLogger", structlog.get_logger("auth"))

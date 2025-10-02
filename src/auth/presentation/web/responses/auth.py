@@ -5,15 +5,38 @@ from starlette.status import (
     HTTP_401_UNAUTHORIZED,
     HTTP_422_UNPROCESSABLE_ENTITY,
     HTTP_500_INTERNAL_SERVER_ERROR,
+    HTTP_201_CREATED,
+    HTTP_409_CONFLICT,
 )
 
+from auth.domain.user.value_objects import UserId
 from auth.presentation.web.schemas import responses as response
+from auth.presentation.web.schemas.base import SuccessfulResponse
+
+REGISTER_RESPONSES: Final[dict[int | str, dict[str, Any]] | None] = {
+    HTTP_201_CREATED: {"model": SuccessfulResponse[UserId]},
+    HTTP_401_UNAUTHORIZED: {"model": response.UnauthenticatedResponseSchema},
+    HTTP_409_CONFLICT: {"model": response.UserAlreadyExistsResponseSchema},
+    HTTP_422_UNPROCESSABLE_ENTITY: response.generate_combined_schema(
+        "Validation Error",
+        response.EmptyLoginResponseSchema,
+        response.EmptyPasswordResponseSchema,
+        response.TooShortLoginResponseSchema,
+        response.TooShortPasswordResponseSchema,
+        response.TooLongLoginResponseSchema,
+        response.TooLongPasswordResponseSchema,
+        response.WrongLoginFormatResponseSchema,
+        response.WrongPasswordFormatResponseSchema,
+    ),
+}
 
 LOGIN_RESPONSES: Final[dict[int | str, dict[str, Any]] | None] = {
     HTTP_200_OK: {"model": response.LoginSuccessfulResponseSchema},
-    HTTP_401_UNAUTHORIZED: {
-        "model": response.UnauthorizedInvalidLoginOrPasswordResponseSchema
-    },
+    HTTP_401_UNAUTHORIZED: response.generate_combined_schema(
+        "UNAUTHORIZED",
+        response.UnauthenticatedResponseSchema,
+        response.UnauthorizedInvalidLoginOrPasswordResponseSchema,
+    ),
     HTTP_422_UNPROCESSABLE_ENTITY: response.generate_combined_schema(
         "Validation Error",
         response.EmptyLoginResponseSchema,

@@ -1,6 +1,7 @@
 from auth.application.ports.id_generator import IdGenerator
 from auth.application.ports.identity_provider import IdentityProvider
 from auth.application.ports.logger import Logger
+from auth.application.ports.password_hasher import PasswordHasher
 from auth.application.ports.password_verify import PasswordVerify
 from auth.application.ports.publisher import Publisher
 from auth.application.ports.time_provider import TimeProvider
@@ -12,6 +13,7 @@ __all__ = (
     "IdGenerator",
     "IdentityProvider",
     "Logger",
+    "PasswordHasher",
     "PasswordVerify",
     "Publisher",
     "TimeProvider",

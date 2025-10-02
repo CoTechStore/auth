@@ -5,7 +5,7 @@ from auth.infrastructure.persistence.sqlalchemy.tables.base import MAPPER_REGIST
 OUTBOX_TABLE = Table(
     "outbox",
     MAPPER_REGISTRY.metadata,
-    Column("outbox_id", UUID, primary_key=True),
+    Column("message_id", UUID, primary_key=True),
     Column("event_type", String(length=100), nullable=False),
     Column("data", String, nullable=False),
 )

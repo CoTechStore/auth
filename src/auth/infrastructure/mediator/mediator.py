@@ -56,4 +56,4 @@ class MediatorImpl(Sender, Publisher):
             # We're building a chain of behaviors.
             handle_next = self.__chain.build_pipeline_behaviors(handler, behaviors)
 
-            await handle_next(event_type)
+            await handle_next(event)

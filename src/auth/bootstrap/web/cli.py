@@ -22,7 +22,7 @@ def main(context: Context) -> None:
     app_config = get_config().app_config
     alembic_config = get_alembic_config()
     uvicorn_config = UvicornConfig(
-        app="auth.bootstrap.web:app_factory",
+        app="auth.bootstrap.web.application:app_factory",
         host=app_config.server_host,
         port=app_config.server_port,
         factory=True,

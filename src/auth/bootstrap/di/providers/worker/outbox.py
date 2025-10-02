@@ -1,11 +1,13 @@
 from dishka import Provider, Scope, alias, provide
 from sqlalchemy.ext.asyncio import AsyncSession
+from structlog.stdlib import BoundLogger
 
+from auth.application.ports import Logger
 from auth.infrastructure.messaging.outbox.interfaces import OutboxGateway, OutboxPublisher
 from auth.infrastructure.messaging.outbox.outbox_processor import OutboxProcessor
 from auth.infrastructure.messaging.outbox.outbox_publisher import RabbitMQOutboxPublisher
+from auth.infrastructure.messaging.outbox.sql_outbox_gateway import SqlOutboxGatewayImpl
 from auth.infrastructure.messaging.transaction import Transaction
-from auth.infrastructure.persistence.adapters import SqlOutboxGatewayImpl
 
 
 class OutboxProvider(Provider):
@@ -18,3 +20,4 @@ class OutboxProvider(Provider):
     outbox_processor = provide(OutboxProcessor)
 
     transaction = alias(AsyncSession, provides=Transaction)
+    logger = alias(BoundLogger, provides=Logger)

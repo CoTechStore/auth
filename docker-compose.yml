@@ -19,13 +19,13 @@ services:
       auth.migrator:
         condition: service_completed_successfully
     healthcheck:
-      test: [ "CMD-SHELL", "curl -f http://localhost:80/healthcheck || exit 1" ]
+      test: [ "CMD-SHELL", "curl -f http://localhost:${SERVER_PORT}/healthcheck || exit 1" ]
       start_period: 15s
       interval: 10s
       timeout: 5s
       retries: 5
     ports:
-      - "${SERVER_PORT}:80"
+      - "7000:${SERVER_PORT}"
 
   auth.migrator:
     <<: *x-shared-web-parameters
@@ -91,7 +91,6 @@ services:
       - auth_network
     ports:
       - "${RABBIT_PORT}:${RABBIT_PORT}"
-      - "15673:15673"
     healthcheck:
       test: ["CMD-SHELL", "rabbitmq-diagnostics -q ping"]
       interval: 10s

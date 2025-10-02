@@ -5,7 +5,12 @@ from auth.application.common.behaviors import (
     EventPublishingBehaviorHandler,
     LogErrorBehaviorHandler,
 )
-from auth.application.operations.commands import LoginHandler, LogoutHandler
+from auth.application.operations.commands import (
+    LoginHandler,
+    LogoutHandler,
+    RegisterHandler,
+)
+from auth.infrastructure.messaging.outbox.outbox_handler import OutboxHandler
 
 
 class HandlersProvider(Provider):
@@ -16,6 +21,11 @@ class HandlersProvider(Provider):
     command_handlers = provide_all(
         LoginHandler,
         LogoutHandler,
+        RegisterHandler,
+    )
+
+    event_handlers = provide_all(
+        OutboxHandler,
     )
 
     # query_handlers = provide_all()

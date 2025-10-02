@@ -5,6 +5,11 @@ from auth.domain.user.value_objects import UserId
 
 
 @dataclass(frozen=True, slots=True)
+class UserCreated(DomainEvent):
+    user_id: UserId
+
+
+@dataclass(frozen=True, slots=True)
 class UserPasswordChanged(DomainEvent):
     user_id: UserId
     hash_password: bytes

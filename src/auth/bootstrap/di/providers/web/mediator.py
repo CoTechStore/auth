@@ -11,6 +11,8 @@ from auth.application.operations.commands import (
     LoginHandler,
     LogoutCommand,
     LogoutHandler,
+    RegisterCommand,
+    RegisterHandler,
 )
 from auth.application.ports import Publisher
 from auth.domain.shared.domain_event import DomainEvent
@@ -34,13 +36,14 @@ class MediatorProvider(Provider):
 
         registry.add_request_handler(LoginCommand, LoginHandler)
         registry.add_request_handler(LogoutCommand, LogoutHandler)
+        registry.add_request_handler(RegisterCommand, RegisterHandler)
+
+        registry.add_event_handlers(DomainEvent, OutboxHandler)
 
         registry.add_pipeline_behavior_handlers(BaseRequest, LogErrorBehaviorHandler)
         registry.add_pipeline_behavior_handlers(
             Command, EventPublishingBehaviorHandler, CommitionBehaviorHandler
         )
-
-        registry.add_event_handlers(DomainEvent, OutboxHandler)
 
         return registry
 
