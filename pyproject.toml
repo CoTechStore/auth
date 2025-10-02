@@ -17,10 +17,6 @@ dependencies = [
     "uuid6>=2025.0.1",
 ]
 
-[build-system]
-requires = ["setuptools>=61"]
-build-backend = "setuptools.build_meta"
-
 [dependency-groups]
 dev = [
     "pre-commit>=4.3.0",
@@ -41,6 +37,11 @@ worker = [
     "taskiq>=0.11.18",
     "taskiq-aio-pika>=0.4.3",
 ]
+
+
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
 
 [project.scripts]
 auth-web = "auth.bootstrap.web.cli:main"
