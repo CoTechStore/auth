@@ -22,5 +22,5 @@ class RabbitMQOutboxPublisher(OutboxPublisher):
 
         await self.__logger.ainfo(
             event=f"Published event {message.event_type} in queue {QueueName.AUTH}.",
-            message_id=message.message_id,
+            message_id=str(message.message_id),
         )
