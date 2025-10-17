@@ -1,0 +1,32 @@
+.lint:image:
+  image: ghcr.io/astral-sh/uv:0.8.0
+
+.lint:script:
+  script:
+    - uv sync --group lint
+    - echo "Running check code format and linting using Ruff..."
+    - echo "Running check static type using Mypy..."
+    - uv run pre-commit run --all-files
+    - echo "Done!"
+
+.lint:cache:
+  cache:
+    key: "venv-${CI_COMMIT_REF_SLUG}"
+    paths:
+      - ./.venv
+      - ~./.local/share/uv
+    policy: pull-push
+
+.lint:retry:
+  retry:
+    max: 2
+    when:
+      - runner_system_failure
+      - stuck_or_timeout_failure
+
+.lint:rules-changes-always:
+  rules:
+    changes:
+      paths:
+        - ${WORKING_DIR}/**/*
+      when: always

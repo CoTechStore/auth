@@ -1,0 +1,30 @@
+.deploy:image:
+  image: docker:25.0.2-alpine3.19
+
+.deploy:script:
+  before_script:
+    # Переменная тип File: SSH_PRIVATE_KEY SSH_KNOWN_HOSTS  и CI_PASSWORD.
+    # Переменная тип Variable: CI_PASSWORD.
+    # Эти переменные находятся в GitLab - Settings -> CI/CD -> Variables.
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - cat "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
+    - chmod 400 ~/.ssh/id_ed25519
+    - cat "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
+    - cd $PROJECT_PATH
+    - echo "$CI_PASSWORD" | docker login $CI_REGISTRY -u $CI_REGISTRY_USER --password-stdin
+  script:
+    - ...
+
+.deploy:retry:
+  retry:
+    max: 2
+    when:
+      - runner_system_failure
+      - stuck_or_timeout_failure
+
+.deploy:only-main:when-manual:
+  only:
+    - main
+  when: manual

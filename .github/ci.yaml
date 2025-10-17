@@ -1,0 +1,31 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  release:
+    name: "Semantic Release"
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install python-semantic-release
+        run: pip install python-semantic-release
+      - name: Generate version
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        id: set-version
+        run: |
+          semantic-release version --skip-build
+          echo "version=$(semantic-release version --print)" >> $GITHUB_OUTPUT

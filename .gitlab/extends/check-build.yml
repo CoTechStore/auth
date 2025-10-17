@@ -1,0 +1,25 @@
+.check-build:image:
+  image:
+    name: gcr.io/kaniko-project/executor:v1.23.0-debug
+    entrypoint: [ "" ]
+
+.check-build:script:
+  script:
+    - /kaniko/executor
+      --context $PATH_WORKING_DIR
+      --dockerfile $PATH_DOCKER_FILE
+      --no-push
+
+.check-build:retry:
+  retry:
+    max: 2
+    when:
+      - runner_system_failure
+      - stuck_or_timeout_failure
+
+.check-build:rules-changes-on_success:
+  rules:
+    changes:
+      paths:
+        - ${WORKING_DIR}/**/*
+      when: on_success

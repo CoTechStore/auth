@@ -1,0 +1,82 @@
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "parent_pipeline"
+
+
+.variables-all: &variables-all
+  APP_NAME: "auth"
+  WORKING_DIR: "src/${APP_NAME}"
+  PATH_WORKING_DIR: "${CI_PROJECT_DIR}/${WORKING_DIR}"
+  PATH_DOCKER_FILE: "${CI_PROJECT_DIR}/Dockerfile"
+
+
+auth-lint:
+  variables:
+    WORKING_DIR: "src/auth"
+  stage: lint
+  tags: formatter
+  extends:
+    - .lint:image
+    - .lint:script
+    - .lint:cache
+    - .lint:retry
+    - .lint:rules-changes-always
+
+
+auth-check-build:
+  needs: auth-lint
+  variables:
+    <<: *variables-all
+  stage: check-build
+  tags: docker
+  extends:
+    - .check-build:image
+    - .check-build:script
+    - .check-build:retry
+    - .check-build:rules-changes-on_success
+
+
+auth-semantic-release:
+  needs: auth-check-build
+  variables:
+    GIT_STRATEGY: "clone"
+    GIT_DEPTH: "0"
+    GITLAB_TOKEN: $CI_JOB_TOKEN
+  stage: semantic-release
+  tags: release
+  extends:
+    - .semantic-release:image
+    - .semantic-release:script
+    - .semantic-release:artifact
+    - .semantic-release:retry
+    - .semantic-release:only-main:when-manual
+
+
+auth-build:
+  needs: auth-semantic-release
+  variables:
+    <<: *variables-all
+    APP_IMAGE: "${CI_REGISTRY_IMAGE}/${APP_NAME}:${VERSION}"
+    APP_IMAGE_LATEST: "${CI_REGISTRY_IMAGE}/${APP_NAME}:latest"
+  stage: build
+  tags: docker
+  extends:
+    - .build:image
+    - .build:script
+    - .build:retry
+    - .build:only-main:rules-changes-on_success
+
+
+auth-deploy:
+  needs: auth-build
+  variables:
+    APP_NAME: "auth"
+    DOCKER_HOST: "ssh://${SERVER_USER}@${SERVER_HOST}"
+    PROJECT_PATH: "/app/${APP_NAME}"
+  stage: deploy
+  tags: docker
+  extends:
+    - .deploy:image
+    - .deploy:script
+    - .deploy:retry
+    - .deploy:only-main:when-manual

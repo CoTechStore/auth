@@ -1,0 +1,56 @@
+name: Pre-commit
+
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - ready_for_review
+    branches:
+      - main
+
+jobs:
+  lint:
+    name: Ruff && MyPy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          version: "0.8.0"
+          enable-cache: true
+      - name: Restore cached venv
+        uses: actions/cache@v4
+        with:
+          path: |
+            ./.venv
+            ~/.local/share/uv
+          key: venv-${{ runner.os }}-${{ hashFiles('**/uv.lock') }}
+      - name: Install dependencies
+        run: uv sync --group lint
+      - name: Run linting with pre-commit
+        run: uv run pre-commit run --all-files
+
+  release:
+    name: "Semantic Release"
+    runs-on: ubuntu-latest
+    needs: [lint]
+    outputs:
+      version: ${{ steps.set-version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install python-semantic-release
+        run: pip install python-semantic-release
+      - name: Generate version
+        id: set-version
+        run: |
+          VERSION=$(semantic-release version --print-last-released)-${{ github.run_id }}
+          echo "version=$VERSION" >> $GITHUB_OUTPUT

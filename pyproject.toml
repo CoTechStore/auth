@@ -47,5 +47,14 @@ build-backend = "setuptools.build_meta"
 auth-web = "auth.bootstrap.web.cli:main"
 auth-worker = "auth.bootstrap.worker.cli:main"
 
+[tool.semantic_release]
+version_toml = ["pyproject.toml:project.version"]
+version_source = "tag"
+upload_to_pypi = false
+commit_message = "chore(release): v{version}"
+
+[tool.semantic_release.commit_parser_options]
+ignore_merge_commits = false
+
 [tool.setuptools.package-data]
 "auth.infrastructure.persistence.alembic" = ["alembic.ini"]
