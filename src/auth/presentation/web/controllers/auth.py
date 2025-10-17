@@ -21,7 +21,7 @@ AUTH_ROUTER = APIRouter(prefix="/api/v1/auth", tags=["Auth"], route_class=Dishka
 
 @AUTH_ROUTER.post(
     path="/register",
-    summary="Регистрация нового пользователя.",
+    summary="Registration new user.",
     responses=auth_response.REGISTER_RESPONSES,
     status_code=status.HTTP_201_CREATED,
 )
@@ -30,15 +30,14 @@ async def register(
     *,
     mediator: FromDishka[Mediator],
 ) -> SuccessfulResponse[UserId]:
-    """Контроллер для регистрации нового пользователя."""
     result = await mediator.send(command)
 
     return SuccessfulResponse(status_code=status.HTTP_201_CREATED, result=result)
 
 
 @AUTH_ROUTER.post(
-    path="/username",
-    summary="Вход в учетную запись.",
+    path="/login",
+    summary="Login to your account.",
     responses=auth_response.LOGIN_RESPONSES,
     status_code=status.HTTP_200_OK,
 )
@@ -47,7 +46,6 @@ async def login(
     *,
     mediator: FromDishka[Mediator],
 ) -> Response:
-    """Контроллер для входа в учетную запись пользователя."""
     command = LoginCommand(credentials.username, credentials.password)
     result = await mediator.send(command)
 
@@ -66,12 +64,11 @@ async def login(
 
 @AUTH_ROUTER.post(
     path="/logout",
-    summary="Выход из учетной записи.",
+    summary="Logout of the account.",
     responses=auth_response.LOGOUT_RESPONSES,
     status_code=status.HTTP_200_OK,
 )
 async def logout(mediator: FromDishka[Mediator]) -> Response:
-    """Контроллер для выхода из учетной записи."""
     command = LogoutCommand()
     await mediator.send(command)
 

@@ -3,7 +3,7 @@ from auth.infrastructure.messaging.transaction import Transaction
 
 
 class OutboxProcessor:
-    """Класс читающий события находящиеся в таблице Outbox."""
+    """A class that reads events from the Outbox table."""
 
     def __init__(
         self,

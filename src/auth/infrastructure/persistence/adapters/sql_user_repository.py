@@ -18,11 +18,9 @@ class SqlUserRepositoryImpl(UserRepository):
         self.__event_adder = event_adder
 
     def add(self, user: User) -> None:
-        """Добавление пользователя."""
         self.__session.add(user)
 
     async def delete(self, user: User) -> None:
-        """Удаление пользователя."""
         await self.__session.delete(user)
 
     async def find(self, **specifications: Unpack[UserSpecifications]) -> User | None:
@@ -36,14 +34,12 @@ class SqlUserRepositoryImpl(UserRepository):
         return self.__load(user) if user else None
 
     async def with_user_id(self, user_id: UserId) -> User | None:
-        """Получить пользователя по user_id."""
         query = select(User).where(and_(USERS_TABLE.c.user_id == user_id))
         user = (await self.__session.execute(query)).scalar_one_or_none()
 
         return self.__load(user) if user else None
 
     async def with_username(self, username: str) -> User | None:
-        """Проверка существования текущего логина."""
         query = select(User).where(and_(USERS_TABLE.c.username.ilike(f"%{username}%")))
         user = (await self.__session.execute(query)).scalar_one_or_none()
         return self.__load(user) if user else None
