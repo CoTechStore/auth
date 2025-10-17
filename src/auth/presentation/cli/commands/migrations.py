@@ -12,8 +12,8 @@ from dishka.integrations.click import inject
 @inject
 def make_migrations(message: str, *, alembic_config: Depends[AlembicConfig]) -> None:
     """
-    Создание миграции
-    Команда: core make-migrations -m 'message'.
+    Create migration
+    Command: core make-migrations -m 'message'.
     """
     alembic_revision(alembic_config, message=message, autogenerate=True)
 
@@ -23,8 +23,8 @@ def make_migrations(message: str, *, alembic_config: Depends[AlembicConfig]) -> 
 @inject
 def migrate(revision: str, *, alembic_config: Depends[AlembicConfig]) -> None:
     """
-    Выполнение миграции
-    Команда: core migrate -r 'message'.
+    Perform migration
+    Command: core migrate -r 'message'.
     """
     alembic_upgrade(alembic_config, revision)
 
@@ -34,8 +34,8 @@ def migrate(revision: str, *, alembic_config: Depends[AlembicConfig]) -> None:
 @inject
 def rollback(revision: str, *, alembic_config: Depends[AlembicConfig]) -> None:
     """
-    Откат миграции
-    Команда: core rollback.
+    Rollback migration
+    Command: core rollback.
     """
     alembic_downgrade(alembic_config, revision)
 
@@ -43,7 +43,7 @@ def rollback(revision: str, *, alembic_config: Depends[AlembicConfig]) -> None:
 @inject
 def show_current_migration(alembic_config: Depends[AlembicConfig]) -> None:
     """
-    Показать текущую миграцию
-    Команда: core show-current-migration.
+    Show current migration
+    Command: core show-current-migration.
     """
     alembic_current(alembic_config)

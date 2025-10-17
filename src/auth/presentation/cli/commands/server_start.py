@@ -18,8 +18,8 @@ def start_uvicorn(
     uvicorn_server: FromDishka[UvicornServer],
 ) -> None:
     """
-    Запуск приложения на FastAPI
-    Команда: core start-uvicorn.
+    Run application FastAPI
+    Command: core start-uvicorn.
     """
     if path is not None:
         uvicorn_server.config.app = path
