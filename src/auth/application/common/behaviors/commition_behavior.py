@@ -6,8 +6,6 @@ from auth.application.ports.transaction_manager import TransactionManager
 class CommitionBehaviorHandler[TCommand: Command, TResponse](
     PipelineBehaviorHandler[TCommand, TResponse]
 ):
-    """Поведение фиксации транзакции."""
-
     def __init__(self, transaction_manager: TransactionManager) -> None:
         self.__transaction_manager = transaction_manager
 

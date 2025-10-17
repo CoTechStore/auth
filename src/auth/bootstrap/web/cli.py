@@ -18,7 +18,7 @@ from auth.presentation.cli.commands.server_start import start_uvicorn
 @group()
 @pass_context
 def main(context: Context) -> None:
-    """Старт приложением через CLI."""
+    """Start web application via CLI."""
     app_config = get_config().app_config
     alembic_config = get_alembic_config()
     uvicorn_config = UvicornConfig(

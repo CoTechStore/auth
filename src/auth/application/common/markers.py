@@ -2,15 +2,12 @@ from dataclasses import dataclass
 
 
 @dataclass(frozen=True)
-class BaseRequest[TResponse]:
-    """Общий маркер запроса."""
+class BaseRequest[TResponse]: ...
 
 
 @dataclass(frozen=True)
-class Command[TResponse](BaseRequest[TResponse]):
-    """Маркер команды."""
+class Command[TResponse](BaseRequest[TResponse]): ...
 
 
 @dataclass(frozen=True)
-class Query[TResponse](BaseRequest[TResponse]):
-    """Маркер запроса."""
+class Query[TResponse](BaseRequest[TResponse]): ...

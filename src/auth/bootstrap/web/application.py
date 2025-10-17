@@ -25,7 +25,6 @@ if TYPE_CHECKING:
 
 @asynccontextmanager
 async def lifespan(application: FastAPI) -> AsyncGenerator[None, None]:
-    """Зависимости приложения."""
     setup_mappings()
     container = cast("AsyncContainer", application.state.dishka_container)
     yield
@@ -33,12 +32,11 @@ async def lifespan(application: FastAPI) -> AsyncGenerator[None, None]:
 
 
 def custom_openapi(application: FastAPI) -> dict[str, Any]:
-    """Swagger configuration."""
     if application.openapi_schema:
         return application.openapi_schema
     openapi_schema = get_openapi(
         title="Auth",
-        version="1.0",
+        version="0.1.0",
         summary="Модуль для авторизации и аутентификации.",
         routes=application.routes,
     )
@@ -69,7 +67,6 @@ def setup_app(config: AppConfig) -> FastAPI:
 
 
 def setup_middlewares(application: FastAPI, config: AppConfig) -> None:
-    """Регистрация middlewares для FastAPI."""
     origins = ["*"] if config.debug else config.cors_origins
     application.add_middleware(
         CORSMiddleware,
@@ -81,20 +78,18 @@ def setup_middlewares(application: FastAPI, config: AppConfig) -> None:
 
 
 def setup_exception_handlers(application: FastAPI) -> None:
-    """Регистрация обработчиков исключений для FastAPI."""
     setup_application_error_handler(application=application)
     setup_domain_error_handler(application=application)
     setup_internal_error_handler(application=application)
 
 
 def setup_routers(application: FastAPI) -> None:
-    """Регистрация маршрутов для FastAPI."""
     application.include_router(HEALTHCHECK_ROUTER)
     application.include_router(AUTH_ROUTER)
 
 
 def app_factory() -> FastAPI:
-    """Точка старта приложения."""
+    """Web application entrypoint."""
     config = get_config()
     logger_config = get_logger_config(config.app_config)
     container = web_container(config.postgres_config, config.auth_config, logger_config)

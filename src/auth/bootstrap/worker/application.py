@@ -95,6 +95,7 @@ def setup_event_handlers(taskiq_broker: AioPikaBroker) -> None:
 
 
 def worker_factory() -> AioPikaBroker:
+    """Worker application entrypoint."""
     config = get_config()
     logger_config = get_logger_config(config.app_config)
     interval_task = config.rabbit_config.interval

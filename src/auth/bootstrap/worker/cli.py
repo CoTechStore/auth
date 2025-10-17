@@ -9,7 +9,7 @@ from auth.presentation.cli.commands.worker_start import start_worker
 @group()
 @pass_context
 def main(context: Context) -> None:
-    """Старт приложением через CLI."""
+    """Start worker application via CLI."""
     worker_args = WorkerArgs(
         broker="auth.bootstrap.worker.application:worker_factory",
         modules=["auth.infrastructure.messaging.outbox"],
